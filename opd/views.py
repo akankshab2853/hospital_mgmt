@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import ExpressRegistration, FollowUp, IssuedVisitorPass, OPDBill, OPDRefund, PhoneAppointment, Doctor, Prescription,RegularRegistration,MedicalRecord,BillSettlement,OPDPatientPayment, VisitorDetail
-from .serializers import ExpressRegistrationSerializer, FollowUpSerializer, IssuedVisitorPassSerializer, OPDBillSerializer, OPDPatientPaymentSerializer, OPDRefundSerializer, PhoneAppointmentSerializer, DoctorSerializer, PrescriptionSerializer,RegularRegistrationSerializer,MedicalRecordSerializer,BillSettlementSerializer, VisitorDetailSerializer
+from .models import CourierParcel, ExpressRegistration, FollowUp, IssuedVisitorPass, OPDBill, OPDRefund, PhoneAppointment, Doctor, Prescription,RegularRegistration,MedicalRecord,BillSettlement,OPDPatientPayment, Vaccination, VisitorDetail
+from .serializers import CourierParcelSerializer, ExpressRegistrationSerializer, FollowUpSerializer, IssuedVisitorPassSerializer, OPDBillSerializer, OPDPatientPaymentSerializer, OPDRefundSerializer, PhoneAppointmentSerializer, DoctorSerializer, PrescriptionSerializer,RegularRegistrationSerializer,MedicalRecordSerializer,BillSettlementSerializer, VaccinationSerializer, VisitorDetailSerializer
 
 class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
@@ -153,3 +153,12 @@ class VisitorDetailViewSet(viewsets.ModelViewSet):
 class IssuedVisitorPassViewSet(viewsets.ModelViewSet):
     queryset=IssuedVisitorPass.objects.all()
     serializer_class=IssuedVisitorPassSerializer
+    
+class CourierParcelViewSet(viewsets.ModelViewSet):
+    queryset=CourierParcel.objects.all()
+    serializer_class=CourierParcelSerializer
+    
+class VaccinationViewSet(viewsets.ModelViewSet):
+    queryset=Vaccination.objects.all()
+    serializer_class=VaccinationSerializer
+    

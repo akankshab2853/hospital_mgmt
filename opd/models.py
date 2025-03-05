@@ -368,10 +368,17 @@ class FollowUp(models.Model):
         return f"Follow-up for {self.patient} with {self.doctor} on {self.followup_date}"
     
 class IssuedVisitorPass(models.Model):
+    MEETING_REASON = [
+        ("Software Demo", "Software Demo"),
+        ("Doctor Meeting", "Doctor Meeting"),
+        ("Documentation Meet", "Documentation Meet"),
+        ("Equipment Demo", "Equipment Demo"),
+        ("Camp Meeting", "Camp Meeting"),
+    ]
     visit_date = models.DateField()
     in_time = models.TimeField()
     out_time = models.TimeField(null=True, blank=True)
-    meeting_reason = models.CharField(max_length=255)
+    meeting_reason = models.CharField(max_length=255,choices=MEETING_REASON)
     visitor_pass_issued = models.BooleanField(default=False)
 
     def __str__(self):
@@ -389,6 +396,14 @@ class VisitorDetail(models.Model):
         ('Female', 'Female'),
         ('Other', 'Other'),
     ]
+    
+    MEETING_REASON = [
+        ("Software Demo", "Software Demo"),
+        ("Doctor Meeting", "Doctor Meeting"),
+        ("Documentation Meet", "Documentation Meet"),
+        ("Equipment Demo", "Equipment Demo"),
+        ("Camp Meeting", "Camp Meeting"),
+    ]
 
     issued_pass = models.ForeignKey(IssuedVisitorPass, on_delete=models.CASCADE, related_name='visitors')
     prefix = models.CharField(max_length=10, choices=VISITOR_PREFIX_CHOICES, default='Mr')
@@ -398,10 +413,54 @@ class VisitorDetail(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Male')
     email = models.EmailField(blank=True, null=True)
     mobile_no = models.CharField(max_length=15)
+    meeting_reason = models.CharField(max_length=255,choices=MEETING_REASON)
     visitor_card = models.CharField(max_length=50, blank=True, null=True)
     visitor_blacklisted = models.BooleanField(default=False)
     is_vip = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.prefix} {self.first_name} {self.last_name}"
+
+class CourierParcel(models.Model):
+    INWARD = 'Inward'
+    OUTWARD = 'Outward'
+    TYPE_CHOICES = [
+        (INWARD, 'Inward'),
+        (OUTWARD, 'Outward'),
+    ]
+
+    PERSONAL = 'Personal'
+    COMPANY = 'Company'
+    CATEGORY_CHOICES = [
+        (PERSONAL, 'Personal'),
+        (COMPANY, 'Company'),
+    ]
+
+    date = models.DateField()
+    time = models.TimeField(auto_now_add=True)
+    parcel_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
+    received_from = models.CharField(max_length=255)
+    address = models.TextField()
+    contact_no = models.CharField(max_length=15)
+    courier_contact = models.CharField(max_length=15, blank=True, null=True)
+    to_department = models.CharField(max_length=255)
+    staff_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.date} - {self.received_from} ({self.parcel_type})"
     
+class Vaccination(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='vaccinations')
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+    company_name = models.CharField(max_length=255, blank=True, null=True)  # Vaccine manufacturer
+    vaccine_name = models.CharField(max_length=255)  # Vaccine name
+    dose_number = models.IntegerField(default=1)  # 1st, 2nd, booster dose
+    vaccination_date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    consult_time = models.DurationField(null=True, blank=True)  # Consultation duration
+    remarks = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.patient} - {self.vaccine_name} (Dose {self.dose_number})"

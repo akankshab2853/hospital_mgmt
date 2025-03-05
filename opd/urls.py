@@ -1,8 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from opd.models import IssuedVisitorPass
-from .views import BillSettlementViewSet, CompanyPaymentStatement, FollowUpViewSet, IssuedVisitorPassViewSet, OPDBillViewSet, OPDPatientPaymentViewSet, OPDRefundViewSet, PatientPaymentStatement, PhoneAppointmentViewSet, DoctorViewSet, ExpressRegistrationViewSet, PrescriptionViewSet,RegularRegistrationViewSet,PatientQueueView, VisitorDetailViewSet, call_patient,MedicalRecordViewSet
+from opd.models import CourierParcel, IssuedVisitorPass
+from .views import BillSettlementViewSet, CompanyPaymentStatement, CourierParcelViewSet, FollowUpViewSet, IssuedVisitorPassViewSet, OPDBillViewSet, OPDPatientPaymentViewSet, OPDRefundViewSet, PatientPaymentStatement, PhoneAppointmentViewSet, DoctorViewSet, ExpressRegistrationViewSet, PrescriptionViewSet,RegularRegistrationViewSet,PatientQueueView, VaccinationViewSet, VisitorDetailViewSet, call_patient,MedicalRecordViewSet
 
 router = DefaultRouter()
 router.register(r'doctors', DoctorViewSet)
@@ -18,7 +18,8 @@ router.register(r'Prescription',PrescriptionViewSet)
 router.register(r'followups', FollowUpViewSet)
 router.register(r'visiterdetails ',VisitorDetailViewSet)
 router.register(r'issuedvisitorpass', IssuedVisitorPassViewSet)  
-
+router.register(r'parcels', CourierParcelViewSet, basename='courierparcel')
+router.register(r'vaccinations',VaccinationViewSet)
 
 
 urlpatterns = [
