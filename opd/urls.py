@@ -1,6 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CompanyPaymentStatement, ManageRefund, OPDBillViewSet, PatientPaymentStatement, PhoneAppointmentViewSet, DoctorViewSet, ExpressRegistrationViewSet,RegularRegistrationViewSet,PatientQueueView, RequestRefund, call_patient,MedicalRecordViewSet
+
+from opd.models import IssuedVisitorPass
+from .views import BillSettlementViewSet, CompanyPaymentStatement, FollowUpViewSet, IssuedVisitorPassViewSet, OPDBillViewSet, OPDPatientPaymentViewSet, OPDRefundViewSet, PatientPaymentStatement, PhoneAppointmentViewSet, DoctorViewSet, ExpressRegistrationViewSet, PrescriptionViewSet,RegularRegistrationViewSet,PatientQueueView, VisitorDetailViewSet, call_patient,MedicalRecordViewSet
 
 router = DefaultRouter()
 router.register(r'doctors', DoctorViewSet)
@@ -9,6 +11,13 @@ router.register(r'express-registration', ExpressRegistrationViewSet)
 router.register(r'regular-registration', RegularRegistrationViewSet)
 router.register(r'medical-records',MedicalRecordViewSet)
 router.register(r'opdbill',OPDBillViewSet)
+router.register(r'billsettlement',BillSettlementViewSet)
+router.register(r'patientpayment',OPDPatientPaymentViewSet)
+router.register(r'refunds', OPDRefundViewSet)
+router.register(r'Prescription',PrescriptionViewSet)
+router.register(r'followups', FollowUpViewSet)
+router.register(r'visiterdetails ',VisitorDetailViewSet)
+router.register(r'issuedvisitorpass', IssuedVisitorPassViewSet)  
 
 
 
@@ -18,6 +27,5 @@ urlpatterns = [
     path('queue/call/', call_patient, name='call-patient'),
     path("payment-statement/patient/<str:patient_name>/", PatientPaymentStatement.as_view(), name="patient-payment-statement"),
     path("payment-statement/company/<str:company_name>/", CompanyPaymentStatement.as_view(), name="company-payment-statement"),
-    path("refund/request/", RequestRefund.as_view(), name="request-refund"),
-    path("refund/manage/<int:refund_id>/", ManageRefund.as_view(), name="manage-refund"),
+    # path('api/', include(router.urls)),
 ]

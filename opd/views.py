@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import ExpressRegistration, OPDBill, OPDRefund, PhoneAppointment, Doctor,RegularRegistration,MedicalRecord
-from .serializers import ExpressRegistrationSerializer, OPDBillSerializer, PhoneAppointmentSerializer, DoctorSerializer,RegularRegistrationSerializer,MedicalRecordSerializer
+from .models import ExpressRegistration, FollowUp, IssuedVisitorPass, OPDBill, OPDRefund, PhoneAppointment, Doctor, Prescription,RegularRegistration,MedicalRecord,BillSettlement,OPDPatientPayment, VisitorDetail
+from .serializers import ExpressRegistrationSerializer, FollowUpSerializer, IssuedVisitorPassSerializer, OPDBillSerializer, OPDPatientPaymentSerializer, OPDRefundSerializer, PhoneAppointmentSerializer, DoctorSerializer, PrescriptionSerializer,RegularRegistrationSerializer,MedicalRecordSerializer,BillSettlementSerializer, VisitorDetailSerializer
 
 class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
@@ -99,6 +99,19 @@ class OPDBillViewSet(viewsets.ModelViewSet):
     queryset=OPDBill.objects.all()
     serializer_class=OPDBillSerializer
     
+class BillSettlementViewSet(viewsets.ModelViewSet):
+    queryset=BillSettlement.objects.all()
+    serializer_class=BillSettlementSerializer
+    
+    
+class OPDPatientPaymentViewSet(viewsets.ModelViewSet):
+     queryset=OPDPatientPayment.objects.all()
+     serializer_class=OPDPatientPaymentSerializer
+    
+    
+    
+    
+    
 class PatientPaymentStatement(APIView):
     def get(self, request, patient_name):
         bills = OPDBill.objects.filter(patient_name=patient_name)
@@ -115,38 +128,28 @@ class CompanyPaymentStatement(APIView):
             return Response({"company_payment_statement": serializer.data})
         return Response({"message": "No company payments found"}, status=status.HTTP_404_NOT_FOUND)
     
-class RequestRefund(APIView):
-    def post(self, request):
-        bill_id = request.data.get("bill_id")
-        refund_amount = request.data.get("refund_amount")
-        refund_reason = request.data.get("refund_reason")
+class OPDRefundViewSet(viewsets.ModelViewSet):
+    queryset = OPDRefund.objects.all()
+    serializer_class = OPDRefundSerializer
+    
+    def perform_create(self, serializer):
+        bill = serializer.validated_data['bill']
+        serializer.save(
+            uhid=bill.uhid, 
+            added_by=self.request.user 
+        )
+class PrescriptionViewSet(viewsets.ModelViewSet):
+    queryset=Prescription.objects.all()
+    serializer_class=PrescriptionSerializer
 
-        try:
-            bill = OPDBill.objects.get(id=bill_id)
-            if refund_amount > bill.net_amount:
-                return Response({"error": "Refund amount cannot exceed the net amount"}, status=status.HTTP_400_BAD_REQUEST)
-
-            refund = OPDRefund.objects.create(bill=bill, refund_amount=refund_amount, refund_reason=refund_reason)
-            return Response({"message": "Refund request submitted", "refund_id": refund.id}, status=status.HTTP_201_CREATED)
-
-        except OPDBill.DoesNotExist:
-            return Response({"error": "Bill not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-class ManageRefund(APIView):
-    def post(self, request, refund_id):
-        try:
-            refund = OPDRefund.objects.get(id=refund_id)
-            action = request.data.get("action")  # "approve" or "reject"
-
-            if action == "approve":
-                refund.refund_status = "Approved"
-            elif action == "reject":
-                refund.refund_status = "Rejected"
-            else:
-                return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
-
-            refund.save()
-            return Response({"message": f"Refund {refund.refund_status.lower()} successfully"}, status=status.HTTP_200_OK)
-
-        except OPDRefund.DoesNotExist:
-            return Response({"error": "Refund request not found"}, status=status.HTTP_404_NOT_FOUND)
+class FollowUpViewSet(viewsets.ModelViewSet):
+    queryset=FollowUp.objects.all()
+    serializer_class=FollowUpSerializer
+    
+class VisitorDetailViewSet(viewsets.ModelViewSet):
+    queryset=VisitorDetail.objects.all()
+    serializer_class=VisitorDetailSerializer
+    
+class IssuedVisitorPassViewSet(viewsets.ModelViewSet):
+    queryset=IssuedVisitorPass.objects.all()
+    serializer_class=IssuedVisitorPassSerializer

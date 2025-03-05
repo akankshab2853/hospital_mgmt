@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ExpressRegistration, OPDBill, PhoneAppointment, Doctor,RegularRegistration,MedicalRecord
+from .models import ExpressRegistration, FollowUp, IssuedVisitorPass, OPDBill, OPDRefund, PhoneAppointment, Doctor, Prescription,RegularRegistration,MedicalRecord,BillSettlement,OPDPatientPayment, VisitorDetail
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,5 +34,36 @@ class OPDBillSerializer(serializers.ModelSerializer):
         model=OPDBill
         fields='__all__'
 
+class BillSettlementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BillSettlement
+        fields="__all__"
+        
+class OPDPatientPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=OPDPatientPayment
+        fields="__all__"
 
-   
+class OPDRefundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OPDRefund
+        fields = '__all__'
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Prescription
+        fields="__all__"
+        
+class FollowUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=FollowUp
+        fields="__all__"
+        
+class VisitorDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=VisitorDetail
+        fields="__all__"
+class IssuedVisitorPassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=IssuedVisitorPass
+        fields="__all__"
