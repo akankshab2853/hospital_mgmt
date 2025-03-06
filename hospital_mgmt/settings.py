@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'opd',
+    'ipd.admission',
     'drf_yasg',
     'patient_mgmt',
     'django_filters',

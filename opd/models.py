@@ -30,7 +30,10 @@ class PhoneAppointment(models.Model):
     last_name = models.CharField(max_length=50)
     address = models.TextField()
     mobile_no = models.CharField(max_length=15)
-    reference_doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+    department_name = models.CharField(max_length=100)
+    doctor = models.ForeignKey( 'Doctor',on_delete=models.CASCADE, related_name='phone_appointments')
+    doctor_mobile_no = models.CharField(max_length=15)
+    reference_doctor = models.ForeignKey( 'Doctor', on_delete=models.CASCADE, related_name='reference_phone_appointments')
     appointment_type = models.CharField(max_length=20, choices=PATIENT_TYPE_CHOICES, default=NEW_PATIENT)
     appointment_status = models.CharField(max_length=20, choices=APPOINTMENT_STATUS_CHOICES, default=GIVEN)
     appointment_date = models.DateField(auto_now_add=True)
@@ -243,15 +246,26 @@ class RegularRegistration(models.Model):
         return f"{self.first_name} {self.last_name} - {self.mobile_no}"
 
 class MedicalRecord(models.Model):
-    patient = models.ForeignKey(PatientRegistration, on_delete=models.CASCADE, related_name="medical_records")
-    diagnosis = models.TextField()
-    treatment = models.TextField()
-    prescription = models.TextField()
-    doctor_notes = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Medical Record for {self.patient.first_name} {self.patient.last_name} - {self.created_at.date()}"
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    mobile_no = models.CharField(max_length=15, blank=True, null=True)
+    uhid = models.CharField(max_length=50, unique=True)  # Unique Health ID
+    consulting_doctor = models.CharField(max_length=100)
+
+    from_date = models.DateField()
+    to_date = models.DateField()
+
+    PATIENT_TYPE_CHOICES = [
+        ("OPD", "Out-Patient Department"),
+        ("IPD", "In-Patient Department"),
+        ("ER", "Emergency Room"),
+    ]
+    patient_type = models.CharField(max_length=10, choices=PATIENT_TYPE_CHOICES)
+
+    advanced_search_option = models.CharField(max_length=255, blank=True, null=True)
+
+    def _str_(self):
+        return f"{self.first_name} {self.last_name} ({self.uhid})"
     
 class OPDBill(models.Model):
     patient = models.ForeignKey(PatientRegistration, on_delete=models.CASCADE, related_name="opd_bills")
@@ -350,8 +364,10 @@ class OPDRefund(models.Model):
 class Prescription(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    drug_name=models.CharField(max_length=100)
     prescription_date = models.DateField(auto_now_add=True)
     remark = models.TextField(blank=True, null=True)
+    
 
     def __str__(self):
         return f"Prescription for {self.patient} by {self.doctor} on {self.prescription_date}"
