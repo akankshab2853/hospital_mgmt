@@ -13,6 +13,14 @@ class DoctorViewSet(viewsets.ModelViewSet):
 class PhoneAppointmentViewSet(viewsets.ModelViewSet):
     queryset = PhoneAppointment.objects.all()
     serializer_class = PhoneAppointmentSerializer
+    
+    @action(detail=False, methods=['get'])
+    def available_slots(self, request):
+        date = request.query_params.get('date', None)
+        if date:
+            appointments = PhoneAppointment.objects.filter(appointment_date=date)
+            return Response({"available_slots": appointments.count()})
+        return Response({"error": "Please provide a valid date"})
 
 class MedicalRecordViewSet(viewsets.ModelViewSet):
     queryset=MedicalRecord.objects.all()
@@ -37,13 +45,7 @@ class CompanyPaymentStatement(APIView):
 
     
     # Extra API to filter available slots
-    @action(detail=False, methods=['get'])
-    def available_slots(self, request):
-        date = request.query_params.get('date', None)
-        if date:
-            appointments = PhoneAppointment.objects.filter(appointment_date=date)
-            return Response({"available_slots": appointments.count()})
-        return Response({"error": "Please provide a valid date"})
+    
     
 class ExpressRegistrationViewSet(viewsets.ModelViewSet):
     queryset=ExpressRegistration.objects.all()
@@ -81,23 +83,27 @@ class PatientQueueView(APIView):
 
 @api_view(['POST'])
 def call_patient(request):
- 
     patient_id = request.data.get('patient_id')
-
+    
     # Check both Regular and Express Registration
     patient = RegularRegistration.objects.filter(id=patient_id).first() or \
               ExpressRegistration.objects.filter(id=patient_id).first()
-
+    
     if patient:
+        if patient.status == "In Consultation":
+            return Response({"message": f"Patient {patient.patient_name} is already in consultation!"}, status=400)
+        
         patient.status = "In Consultation"
         patient.save()
         return Response({"message": f"Patient {patient.patient_name} is now being called!"})
-    
+
     return Response({"error": "Patient not found!"}, status=400)
 
 class OPDBillViewSet(viewsets.ModelViewSet):
     queryset=OPDBill.objects.all()
     serializer_class=OPDBillSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['patient_name', 'company_name']
     
 class BillSettlementViewSet(viewsets.ModelViewSet):
     queryset=BillSettlement.objects.all()
@@ -107,26 +113,6 @@ class BillSettlementViewSet(viewsets.ModelViewSet):
 class OPDPatientPaymentViewSet(viewsets.ModelViewSet):
      queryset=OPDPatientPayment.objects.all()
      serializer_class=OPDPatientPaymentSerializer
-    
-    
-    
-    
-    
-class PatientPaymentStatement(APIView):
-    def get(self, request, patient_name):
-        bills = OPDBill.objects.filter(patient_name=patient_name)
-        if bills.exists():
-            serializer = OPDBillSerializer(bills, many=True)
-            return Response({"patient_payment_statement": serializer.data})
-        return Response({"message": "No payments found for this patient"}, status=status.HTTP_404_NOT_FOUND)
-    
-class CompanyPaymentStatement(APIView):
-    def get(self, request, company_name):
-        bills = OPDBill.objects.filter(company_name=company_name, is_company_billed=True)
-        if bills.exists():
-            serializer = OPDBillSerializer(bills, many=True)
-            return Response({"company_payment_statement": serializer.data})
-        return Response({"message": "No company payments found"}, status=status.HTTP_404_NOT_FOUND)
     
 class OPDRefundViewSet(viewsets.ModelViewSet):
     queryset = OPDRefund.objects.all()

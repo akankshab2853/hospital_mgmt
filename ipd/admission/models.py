@@ -189,3 +189,94 @@ class MedicolegalCertificate(models.Model):
 
     def __str__(self):
         return f"MLC {self.mlc_no} - {self.patient_name}"
+    
+class PolicyVerification(models.Model):
+    OPD = 'OPD'
+    IPD = 'IPD'
+    PATIENT_TYPE_CHOICES = [
+        (OPD, 'OPD'),
+        (IPD, 'IPD'),
+    ]
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100)
+    mobile_no =models.CharField(max_length=10)
+    uhid = models.CharField(max_length=50, unique=True) 
+    ip_no = models.CharField(max_length=50, blank=True, null=True) 
+    adm_dr =models.CharField( max_length=50)
+    ward=models.CharField(max_length=50)
+    patient_type = models.CharField(max_length=3, choices=PATIENT_TYPE_CHOICES)  
+    tarrif_name=models.CharField(max_length=50)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    advance_serach_option =models.TextField()
+
+
+class ChangePatient(models.Model):
+    OPD = 'OPD'
+    IPD = 'IPD'
+    PATIENT_TYPE_CHOICES = [
+        (OPD, 'OPD'),
+        (IPD, 'IPD'),
+    ]
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100)
+    mobile_no =models.CharField(max_length=10)
+    uhid = models.CharField(max_length=50, unique=True) 
+    ip_no = models.CharField(max_length=50, blank=True, null=True) 
+    adm_dr =models.CharField( max_length=50)
+    ward=models.CharField(max_length=50)
+    patient_type = models.CharField(max_length=3, choices=PATIENT_TYPE_CHOICES)  
+    tarrif_name=models.CharField(max_length=50)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    advance_serach_option =models.TextField()
+
+class CFormDetails(models.Model):
+    OPD = 'OPD'
+    IPD = 'IPD'
+    PATIENT_TYPE_CHOICES = [
+        (OPD, 'OPD'),
+        (IPD, 'IPD'),
+    ]
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100)
+    mobile_no =models.CharField(max_length=10)
+    uhid = models.CharField(max_length=50, unique=True) 
+    ip_no = models.CharField(max_length=50, blank=True, null=True) 
+    adm_dr =models.CharField( max_length=50)
+    ward=models.CharField(max_length=50)
+    patient_type = models.CharField(max_length=3, choices=PATIENT_TYPE_CHOICES)  
+    tarrif_name=models.CharField(max_length=50)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    advance_serach_option =models.TextField()
+
+class DepartmentTransfer(models.Model):
+    OPD = 'OPD'
+    IPD = 'IPD'
+    PATIENT_TYPE_CHOICES = [
+        (OPD, 'OPD'),
+        (IPD, 'IPD'),
+    ]
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100)
+    mobile_no =models.CharField(max_length=10)
+    uhid = models.CharField(max_length=50, unique=True) 
+    ip_no = models.CharField(max_length=50, blank=True, null=True) 
+    adm_dr =models.CharField( max_length=50)
+    ward=models.CharField(max_length=50)
+    patient_type = models.CharField(max_length=3, choices=PATIENT_TYPE_CHOICES)  
+    tarrif_name=models.CharField(max_length=50)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    advance_serach_option =models.TextField()
+
+
+
+
+
+

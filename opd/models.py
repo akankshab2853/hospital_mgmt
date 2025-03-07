@@ -364,7 +364,7 @@ class OPDRefund(models.Model):
 class Prescription(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    drug_name=models.CharField(max_length=100)
+    drug_name=models.CharField(max_length=100) 
     prescription_date = models.DateField(auto_now_add=True)
     remark = models.TextField(blank=True, null=True)
     
