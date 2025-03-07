@@ -41,7 +41,6 @@ urlpatterns = [
     path('api/', include('opd.urls')),# Ensure 'opd.urls' exists
     path ('api/', include('ipd.admission.urls')),
     path('api/',include('patient_mgmt.urls')),
-    path('accounts/', include('accounts.urls')),
     # Swagger & ReDoc URLs
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
